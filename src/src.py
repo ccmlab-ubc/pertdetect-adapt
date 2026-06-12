@@ -4,6 +4,8 @@ import seaborn as sns
 import pandas as pd
 import scipy.optimize
 from scipy.optimize import minimize
+from scipy.optimize import curve_fit
+from scipy.optimize import approx_fprime
 from scipy.stats import norm
 from scipy import stats
 from scipy.special import logsumexp
@@ -944,3 +946,63 @@ def test_remove_outliers(z_thresh, df, reach_col, subj_col, task, abs_cutoff, sw
 
     return df
 
+
+def fit_piecewise_with_ci(df, subject_id, xcol="rotation", ycol="adaptation", 
+                          bp1=6, bp2=-6, n_points=300, alpha=0.05):
+
+    x = np.array(df[xcol])
+    y = np.array(df[ycol])
+
+    # Remove NaN or Inf
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    x_clean, y_clean = x[mask], y[mask]
+
+    # Fit
+    popt, pcov = curve_fit(
+        lambda x, a, b, c, e: piecewise_linear_2bp(x, a, b, c, e, x0=bp2, x1=bp1),
+        x_clean, y_clean
+    )
+
+    # Fit line
+    x_fit = np.linspace(min(x_clean), max(x_clean), n_points)
+    y_fit = piecewise_linear_2bp(x_fit, *popt, x0=bp2, x1=bp1)
+
+    # Jacobian for variance propagation
+    eps = np.sqrt(np.finfo(float).eps)
+    jac = np.array([
+        approx_fprime(popt, 
+                      lambda p: piecewise_linear_2bp(np.array([xx]), *p, x0=bp2, x1=bp1)[0], 
+                      eps)
+        for xx in x_fit
+    ])
+    var_pred = np.sum(jac @ pcov * jac, axis=1)
+    std_pred = np.sqrt(var_pred)
+
+    # Confidence intervals
+    z = 1.96  # ~95% for large df
+    ci_upper = y_fit + z * std_pred
+    ci_lower = y_fit - z * std_pred
+
+    return x_fit, y_fit, ci_lower, ci_upper, popt, pcov
+
+
+def piecewise_linear_2bp(x, a, b, c, e, x0, x1):
+    '''
+    x: input data
+    a: slope from -10 to -6
+    b: bias from -10 to -6
+    c: slope from -6 to +6
+    d: bias from -6 to +6
+    e: slope from +6 to +10
+    f: bias from +6 to +10
+    '''
+    # Ensure continuity across both breakpoints
+    d = a * x0 + b - c * x0
+    f = c * x1 + d - e * x1
+    return np.piecewise(
+        x,
+        [x < x0, (x >= x0) & (x < x1), x >= x1],
+        [lambda x: a * x + b,  
+        lambda x: c * x + d,
+        lambda x: e * x + f]
+    )
