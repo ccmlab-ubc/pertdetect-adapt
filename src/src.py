@@ -162,8 +162,9 @@ def vco_ll(df, C, B, sigma_v, b, n_sims=None, fit_task="adapt"):
         pert_resp = df_sdt["pert_resp"].values
         no_fit_sdt = df_sdt["no_fit"].values
         
-        # Closed-form computation of p(det)
-        mu = df_sdt["x_f"].values + df_sdt["delta_xv"].values + b
+        # Closed-form computation of p(det): mu is mean of error dist and
+        # we are checking to see how much exceeds +C and -C
+        mu = df_sdt["x_f"].values + df_sdt["delta_xv"].values - b
         z_pos = (C - mu) / sigma_v
         z_neg = (-C - mu) / sigma_v
         p_det = (1 - norm.cdf(z_pos)) + norm.cdf(z_neg)
@@ -273,7 +274,8 @@ def co_ll(df, C, B, sigma_comb, b, n_sims, fit_task):
         pert_resp = df_sdt["pert_resp"].values
         no_fit_sdt = df_sdt["no_fit"].values
         
-        # Closed-form computation of p(det)
+        # Closed-form computation of p(det): mu is mean of error dist and
+        # we are checking to see how much exceeds +C and -C
         mu = df_sdt["delta_xv"].values 
         z_pos = (C - mu) / sigma_comb
         z_neg = (-C - mu) / sigma_comb
@@ -366,16 +368,17 @@ def co_ll(df, C, B, sigma_comb, b, n_sims, fit_task):
 def piece_ll(df, alpha, beta, sigma_p, sigma_pert, b, n_sims, fit_task, mu_pert=0):
     if fit_task == "sdt":
         sigma_f_sdt = df.loc[df["session"] == "sdt", "sigma_motor_sdt"].values[0]
+        pert_resp = df["pert_resp"].values
     elif fit_task == "adapt":
         sigma_f_adapt = df.loc[df["session"] == "adapt", "sigma_motor_adapt"].values[0]
     else:
         sigma_f_sdt = df.loc[df["session"] == "sdt", "sigma_motor_sdt"].values[0]
         sigma_f_adapt = df.loc[df["session"] == "adapt", "sigma_motor_adapt"].values[0]
-    
+        pert_resp = df["pert_resp"].values
+
     rotation = df["delta_xv"].values
     x_f = df["x_f"].values
     vis_fb = df["vis_fb"].values
-    pert_resp = df["pert_resp"].values
     session = df["session"].values
 
     num_trials = len(x_f)
