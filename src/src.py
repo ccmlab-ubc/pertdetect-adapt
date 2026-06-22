@@ -734,7 +734,45 @@ def vco_simulate_sdt(df, C, sigma_v, b, sigma_plan=None):
 
     return resp
 
+
+def cohybrid_simulate_adapt(df, C, B, alpha, beta, sigma_p, b, sigma_plan=None):
+    '''
+    This model incorporates a linearly increasing sigma_v in order to attempt
+    to capture saturated adaptation.
+    '''
     
+    df_adapt = df.loc[df["session"] == "adapt", :]
+    # Grab vars from dataframe 
+    sigma_f = df_adapt.loc[df["session"] == "adapt", "sigma_motor_adapt"].values[0]
+    rotation = df_adapt["delta_xv"].values
+    x_f = df_adapt["x_f"].values
+    vis_fb = df_adapt["vis_fb"].values
+    num_trials = len(rotation)
+    
+    # Initialize 
+    x_f_hat = np.zeros(num_trials)
+    
+    # Loop through trials
+    for i in range(num_trials - 1):
+        if i == 0:
+            x_f_hat[i] = b + np.random.normal(loc=0, scale=sigma_f)
+        # Simulate one set of observations per trial
+        if vis_fb[i] == 1:
+            sigma_v = alpha + beta * np.abs(x_f_hat[i] + rotation[i])
+            v = np.random.normal(loc=rotation[i], scale=sigma_v)
+            p = np.random.normal(loc=x_f_hat[i], scale=sigma_p)
+            err = v - p
+        else:
+            err = 0
+
+        if np.abs(err) > C:
+            x_f_hat[i + 1] = -B * err + b + np.random.normal(loc=0, scale=sigma_f)
+        else: 
+            x_f_hat[i + 1] = b + np.random.normal(loc=0, scale=sigma_f) 
+
+    return x_f_hat
+    
+
 def compute_d_prime(df: pd.DataFrame, s: int, collapsed: bool, pert_start: int, subj_col: str, rot_col: str, det_col: str):
 
     # NOTE: Add a 'collapsed' boolean for collapsing rotations. Will be necessary for linear fitting.
