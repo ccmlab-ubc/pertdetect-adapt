@@ -32,7 +32,8 @@ This study combines behavioral and computational approaches towards understandin
 
     - `behavioural/analyze-adaptation.ipynb`
     - `behavioural/analyze-pert-detection.ipynb`  
-    - `modeling/pybads-model-fitting.ipynb`  
+    - `modeling/pybads-model-fitting.ipynb`
+    - `modeling/adaptation-parameter-recovery.ipynb` 
     - `modeling/sdt-parameter-recovery.ipynb`
     - `modeling/analyze-models.ipynb`    
      
