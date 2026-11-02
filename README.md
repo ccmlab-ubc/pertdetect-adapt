@@ -18,13 +18,17 @@ This study combines behavioral and computational approaches towards understandin
 
 1) To install the exact same Python packages and versions used for all analyses, you can recreate the same virtual environment by entering the following command in your terminal (within your cloned/downloaded project directory):
 
-    `$ conda env create --name <nameyourenvironment> --file environment.yml`
+    `$ conda env create --name <name-of-your-environment> --file environment.yml`
 
-2) These notebooks call on a package of custom-written functions found in the `src` directory. You may need to pip install this package. You can do so with the following command:
+2) Activate the virtual environment.
+
+    `$ conda active <name-of-your-environment>`
+
+3) These notebooks call on a package of custom-written functions found in the `src` directory. You may need to pip install this package. You can do so with the following command:
 
     `pip install -e .`
 
-3) Once you've installed and conda activated the replicated environment, and pip installed the source code, you should be able to seamlessly run the Jupyter notebooks found in `experiment-1/scripts` to recreate the analyses:
+4) Once you've installed and activated the replicated environment, and pip installed the source code, you should be able to seamlessly run the Jupyter notebooks found in `behavior` to recreate the analyses:
 
     - `analyze-behavior.ipynb`  
     - `model-fitting.ipynb`  
@@ -33,7 +37,7 @@ This study combines behavioral and computational approaches towards understandin
 4) The necessary data and results for running some parts of these notebooks are found in `experiment-1/results/`.
 
 ## Contact
----
+
 For any questions about the study, please email Hyosub Kim (hyosub.kim@ubc.ca).
 
 
