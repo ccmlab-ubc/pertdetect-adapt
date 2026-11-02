@@ -4,7 +4,6 @@ Project code and data associated with the paper "Causal inference, prediction, a
 
 
 ## Authors
----
 **Hyosub E. Kim**, Romeo Chua, and Davin Hu
 
 ## Study summary
