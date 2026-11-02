@@ -28,7 +28,7 @@ This study combines behavioral and computational approaches towards understandin
 
     `pip install -e .`
 
-4) Once you've installed and activated the replicated environment, and pip installed the source code, you should be able to seamlessly run the Jupyter notebooks found in `behavior` to recreate the analyses:
+4) Once you've installed and activated the replicated environment, and pip installed the source code, you should be able to seamlessly run the Jupyter notebooks found in `behavioural` and `modeling` to recreate the analyses:
 
     - `analyze-behavior.ipynb`  
     - `model-fitting.ipynb`  
