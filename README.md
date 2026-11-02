@@ -1,6 +1,6 @@
 # pertdetect-adapt
 
-Project code and data associated with the manuscript titled "Distinct computations underlie movement error parsing during implicit motor adaptation and perturbation detection". A preprint version of this work is accessible [here](https://www.biorxiv.org/content/10.64898/2026.06.25.734533v1)). 
+Project code and data associated with the manuscript titled "Distinct computations underlie movement error parsing during implicit motor adaptation and perturbation detection". A preprint version of this work is accessible [here](https://www.biorxiv.org/content/10.64898/2026.06.25.734533v1). 
 
 
 ## Authors
